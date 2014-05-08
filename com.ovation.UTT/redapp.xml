@@ -1,0 +1,19 @@
+<CFBundle>
+	<RedApp id="com.ovation.UTT" >
+	<Authorization name="com.sabre.edge.cf.sws.SWS" threshold="3" metric="tps"/>
+	<Authorization name="com.sabre.edge.cf.emu.ShowInEmulator" threshold="1" />
+	</RedApp>
+	
+	<Service
+	name="EMU_COMMAND"
+	action_code="UTT"
+	handler_name="com.ovation.utt.UTTCommandInt"
+		 />
+	<Service
+	name="EMU_COMMAND"
+	action_code="UTW"
+	handler_name="com.sabre.edge.cf.webapp.services.WebViewForwardingService">
+	<ExternalHandler target="com.ovation.UTT.UTTWebView:callEmuBridge" force_focus="true"></ExternalHandler>
+		 </Service>
+	
+</CFBundle>

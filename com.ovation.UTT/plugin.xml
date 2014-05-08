@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse version="3.4"?><plugin>
+ <extension point="com.sabre.edge.cf.redapp">
+   </extension>
+   <extension point="com.sabre.edge.redapp.contactdetails.provider">
+   <contactDetails company="Ovation Travel Group" contactName="Ovation Support" email="support@ovationtravel.com" phoneNumber="" website="http://www.ovationtravel.com">
+      </contactDetails>
+   </extension>
+   <extension point="org.eclipse.ui.views">
+      
+   <view allowMultiple="true" category="com.sabre.edge.app.ui.category" class="com.ovation.utt.UTTView" icon="images/redapp_view_icon.png" id="com.ovation.UTT.redapp.view" name="UTT View"/>
+   <view
+         class="com.ovation.utt.UTTWebView"
+         icon="images/redapp_view_icon.png"
+         id="com.ovation.UTT.UTTWebView"
+         name="UTT Web View"
+         restorable="true">
+   </view>
+   </extension>
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+      
+   <perspectiveExtension targetID="com.sabre.edge.app.ui.perspective">
+         <view 
+         	closeable="true" 
+         	id="com.ovation.UTT.redapp.view" 
+         	minimized="false" 
+         	moveable="false" 
+         	ratio="0.6" 
+         	relationship="bottom" 
+         	relative="org.eclipse.ui.editorss" 
+         	showTitle="true" 
+         	standalone="true"
+         	 visible="false"/>
+         <view
+               closeable="true"
+               id="com.ovation.UTT.UTTWebView"
+               minimized="false"
+               moveable="false"
+               ratio="0.7"
+               relationship="right"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="true"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+  
+   </extension>
+   <extension point="org.eclipse.ui.commands">
+     
+   <command id="com.ovation.UTT.redapp.view.command" name="Open RedApp View">
+         <commandParameter id="viewId" name="viewId"/>
+      </command>
+   <command
+         id="com.ovation.UTT.openUTTWebView"
+         name="Open UTT Web View">
+      <commandParameter
+            id="viewId"
+            name="viewId"
+            optional="true">
+      </commandParameter>
+   </command>
+   
+   </extension>
+   <extension point="org.eclipse.ui.handlers">
+     
+   <handler class="com.sabre.edge.platform.core.ui.handlers.OpenViewHandler" commandId="com.ovation.UTT.redapp.view.command">
+         <enabledWhen>
+            <reference definitionId="com.sabre.edge.command.definitions.editor"/>
+         </enabledWhen>
+      </handler>
+   <handler
+         class="com.sabre.edge.platform.core.ui.handlers.OpenViewHandler"
+         commandId="com.ovation.UTT.UTTWebView.command">
+   </handler>
+  
+   </extension>
+   <extension point="org.eclipse.ui.menus">
+      
+   <menuContribution locationURI="menu:tools">
+         <command commandId="com.ovation.UTT.redapp.view.command" icon="images/redapp_view_icon.png" label="Open UTT View" style="push" tooltip="UTT View Tooltip">
+            <parameter name="viewId" value="com.ovation.UTT.redapp.view"/>
+         </command>
+      </menuContribution>
+      <menuContribution locationURI="toolbar:com.sabre.edge.toolbar.sidebar">
+         <command commandId="com.ovation.UTT.redapp.view.command" icon="images/redapp_view_icon.png" label="Open UTT View" style="push" tooltip="UTT View Tooltip">
+            <parameter name="viewId" value="com.ovation.UTT.redapp.view"/>
+            <visibleWhen checkEnabled="true"/>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:com.sabre.edge.toolbar.sidebar">
+         <command
+               commandId="com.ovation.UTT.openUTTWebView"
+               label="Open UTT Web View"
+               style="push">
+         </command>
+      </menuContribution>
+   
+   </extension>
+  
+</plugin>

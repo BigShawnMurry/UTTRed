@@ -310,7 +310,7 @@ public class UTTView extends ViewPart  {
 			//}
 			//else{
 			//utdb.setEmail(Email);
-		ResultSet rs=UTTDBManager.executeQuery("{call sp_JavaGetUTTData(?)}",Conn);
+		ResultSet rs=UTTDBManager.executeQuery("{call usp_UTT_Java(?)}",Conn);
 		
 			java.sql.ResultSetMetaData rsmd = rs.getMetaData();
 

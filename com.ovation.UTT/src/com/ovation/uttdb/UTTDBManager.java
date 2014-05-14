@@ -25,7 +25,7 @@ public class UTTDBManager {
 	public void init() throws SQLException, ClassNotFoundException {
 	
 	Connection conn= openConnection();
-	String SPsqlall="EXEC sp_JavaGetUTTData ?";
+	String SPsqlall="EXEC usp_UTT_Java ?";
 	//String SPsqluse="EXEC sp_UTTUsed ?";
 	//String SPsqlopen="EXEC sp_UTTOpen ?";
 	//executeQuery(SPsqlall,conn);
@@ -37,7 +37,7 @@ public class UTTDBManager {
 	{
 		Connection con=null;
 		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		con=DriverManager.getConnection("jdbc:sqlserver://NYC-HQSQL-08;user=OvationClient;password=OvationClient-sql-08;databaseName=Ovation4");
+		con=DriverManager.getConnection("jdbc:sqlserver://SVR-SQL-01;user=OvationClient;password=0\\/at10Ncl13NT-01;databaseName=Ovation");
 		return con;
 	}
 	private static void closeConnection(Connection conn) throws SQLException {

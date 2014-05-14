@@ -14,7 +14,7 @@ import com.ovation.utt.domain.UTTAbstractModel;
 public class UTTModel extends UTTAbstractModel<UTT> {
   //Map<UTT,String>utt=new HashMap<UTT,String>(); 
 	private static SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy");
-	private final String query="EXEC sp_JavaGetUTTData ?";  
+	private final String query="EXEC usp_UTT_Java ?";  
 	
   public List<UTT> getUTT()
   {
@@ -43,7 +43,7 @@ public class UTTModel extends UTTAbstractModel<UTT> {
 		u.setCityPair(rs.getString("CityPair"));
 		u.setCustID(rs.getString("CustomerID"));
 		u.setFareBasisCode(rs.getString("FareBasisCode"));
-		u.seticketStatus(rs.getString("Status"));
+		u.seticketStatus(rs.getString("TicketStatus"));
 		u.setPAR(rs.getString("PAR"));
 		u.setPCC(rs.getString("PCC"));
 		u.setRecordLocator(rs.getString("PNR"));

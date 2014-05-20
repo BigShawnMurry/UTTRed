@@ -27,11 +27,9 @@ import com.sabre.edge.cf.core.registry.service.ISRWCommunication;
 import com.sabre.edge.cf.emu.data.EmulatorCommand;
 import com.sabre.edge.cf.emu.data.requests.EmulatorCommandRequest;
 import com.sabre.edge.cf.emu.data.responses.EmulatorCommandResponse;
-import com.sabre.edge.cf.model.IError;
-import com.sabre.edge.cf.model.IRequest;
-import com.sabre.edge.cf.model.IService;
-import com.sabre.edge.cf.model.IServiceContext;
-
+import com.sabre.edge.cf.emu.external.ExecuteInEmuServiceClient;
+import com.sabre.edge.cf.emu.external.ShowInEmuServiceClient;
+import com.sabre.edge.cf.model.*;
 import com.sabre.edge.cf.sws.data.SWSRequest;
 import com.sabre.edge.cf.sws.data.SWSResponse;
 import com.sabre.edge.cf.sws.external.SWSServiceClient;
@@ -50,10 +48,12 @@ public class UTTCommandInt implements IService{
 		UTTView v=new UTTView();
 		ContextStatusAdvisor contextAdv= new ContextStatusAdvisor(context, getClass());
 		IRequest request= context.getRequest();
+		IResponse response= context.getResponse();
 		if(request instanceof EmulatorCommandRequest)
 		{
 			EmulatorCommandRequest commandRequest= (EmulatorCommandRequest)request;
 			EmulatorCommand command = commandRequest.getEmulatorCommand();
+			//EmulatorCommandResponse respond= null;
 			if(command.getCommand().startsWith("UTT"))
 			{
 				email=getEmail();
@@ -64,12 +64,24 @@ public class UTTCommandInt implements IService{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} 
+				
+				ISRWCommunication com =Activator.getDefault().getServiceReference(ISRWCommunication.class);
+				 ExecuteInEmuServiceClient exeClient = new ExecuteInEmuServiceClient(com);
+				 EmulatorCommand cmd = new EmulatorCommand("*IA");
+
+                cmd.setShowResponse(true);
+                 
+
+                 EmulatorCommandRequest req = new EmulatorCommandRequest(cmd);
+                 exeClient.send(req);
+				
+				
 			} 
 			//else if(command.getCommand().startsWith("UTW"))
 			//{
 				//OpenWebView();
 		//	}
-			EmulatorCommandResponse respond= new EmulatorCommandResponse();
+			
 			
 		}
 		

@@ -130,7 +130,7 @@ public class UTTView extends ViewPart  {
                  {
             		
                         	
-                             String command="WETR*"+ sel;
+                             String command="WETR*T"+ sel;
                              System.out.print(command);
                             ISRWCommunication com =Activator.getDefault().getServiceReference(ISRWCommunication.class);
 

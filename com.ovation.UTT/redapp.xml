@@ -2,6 +2,7 @@
 	<RedApp id="com.ovation.UTT" >
 	<Authorization name="com.sabre.edge.cf.sws.SWS" threshold="3" metric="tps"/>
 	<Authorization name="com.sabre.edge.cf.emu.ShowInEmulator" threshold="1" />
+	<Authorization name="com.sabre.edge.cf.emu.ExecuteInEmulator" threshold="1"/>
 	</RedApp>
 	
 	<Service

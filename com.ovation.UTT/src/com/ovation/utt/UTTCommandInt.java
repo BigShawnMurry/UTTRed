@@ -2,6 +2,7 @@ package com.ovation.utt;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.sql.SQLException;
 
@@ -16,6 +17,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 
@@ -107,7 +109,7 @@ public class UTTCommandInt implements IService{
 		String ret=null;
 		 String err=null;
 		 
-		/*try{
+		try{
 			ISRWCommunication com=Activator.getDefault().getServiceReference(ISRWCommunication.class);
 			payload=getDocument("PNRDisplay.xml");
 			SWSRequest rq= new SWSRequest();
@@ -136,11 +138,33 @@ public class UTTCommandInt implements IService{
 	}
 	catch(Exception e)
 	{ret=e.getMessage();
-	}*/
-		 ret="WBO100111@WOLFORD.COM";
+	}
+		 
 	return ret;
 			
 		}
+	 private Document getDocument(String doc)
+	    {
+	        try
+	        {
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				factory.setNamespaceAware(true);
+				DocumentBuilder db;
+				db = factory.newDocumentBuilder();
+				
+				InputSource is = new InputSource();
+				is.setCharacterStream(new StringReader(doc));
+				
+				Document docPayload = db.parse(is);
+				
+				return docPayload;
+	        }
+	        catch (Exception ex)
+	        {
+	            ex.printStackTrace();
+	            return null;
+	        }
+	    }
 	 /*private String getStringFromDoc(Document doc)
 	    {
 	        try
@@ -183,7 +207,7 @@ public class UTTCommandInt implements IService{
     					NodeList nl2=an.getChildNodes();
     					for(int x=0;x<nl2.getLength();x++)
     					{
-    						System.out.println(nl2.item(x));
+    						
     	    				Element el=(Element)nl2.item(x);
     	    				if(el.getNodeName().contains("RemarkInfo"))
     	    				{

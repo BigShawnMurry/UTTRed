@@ -9,6 +9,11 @@ import java.sql.SQLException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
@@ -42,6 +47,7 @@ public class UTTCommandInt implements IService{
 	
 	 private UTTView Viewer= new UTTView();
 	private String email=null;
+	private static final ISRWCommunication com =Activator.getDefault().getServiceReference(ISRWCommunication.class);
 	public UTTCommandInt()
 	{}
 	@Override
@@ -67,7 +73,7 @@ public class UTTCommandInt implements IService{
 					e.printStackTrace();
 				} 
 				
-				ISRWCommunication com =Activator.getDefault().getServiceReference(ISRWCommunication.class);
+			
 				 ExecuteInEmuServiceClient exeClient = new ExecuteInEmuServiceClient(com);
 				 EmulatorCommand cmd = new EmulatorCommand("*IA");
 
@@ -108,11 +114,13 @@ public class UTTCommandInt implements IService{
 		String act="TravelItineraryReadLLSRQ";
 		String ret=null;
 		 String err=null;
-		 
+		 String payloadxml="<?xml version=\"1.0\" encoding=\"UTF-8\" ?><TravelItineraryReadRQ xmlns=\"http://webservices.sabre.com/sabreXML/2003/07\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" TimeStamp=\"2012-12-20T16:00:00\" Version=\"1.1.1\"><POS><Source PseudoCityCode=\"IPCC\"/></POS><MessagingDetails><Transaction Code=\"PNR\"/></MessagingDetails></TravelItineraryReadRQ>";
+		 payloadxml=payloadxml.trim().replaceFirst("^([\\W]+)<","<");
+		 SWSRequest rq= new SWSRequest();
 		try{
-			ISRWCommunication com=Activator.getDefault().getServiceReference(ISRWCommunication.class);
-			payload=getDocument("PNRDisplay.xml");
-			SWSRequest rq= new SWSRequest();
+			
+			payload=getDocument(payloadxml);
+			
 			rq.setAction(act);
 			rq.setPayload(payload);
 			//ServiceContext ctx = new ServiceContext();
@@ -143,10 +151,12 @@ public class UTTCommandInt implements IService{
 	return ret;
 			
 		}
-	 private Document getDocument(String doc)
+	 private Document getDocument(String doc)throws ParserConfigurationException, SAXException, IOException
 	    {
 	        try
 	        {
+	        	/*InputStream fileInputStream = getClass().getClassLoader()
+	    				.getResourceAsStream(doc);*/
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				factory.setNamespaceAware(true);
 				DocumentBuilder db;
@@ -156,7 +166,11 @@ public class UTTCommandInt implements IService{
 				is.setCharacterStream(new StringReader(doc));
 				
 				Document docPayload = db.parse(is);
-				
+	        	//DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	    		//factory.setNamespaceAware(true);
+	    		//DocumentBuilder builder = factory.newDocumentBuilder();
+	    		///return builder.parse(fileInputStream, "UTF-8");
+	        	
 				return docPayload;
 	        }
 	        catch (Exception ex)
@@ -209,24 +223,30 @@ public class UTTCommandInt implements IService{
     					{
     						
     	    				Element el=(Element)nl2.item(x);
-    	    				if(el.getNodeName().contains("RemarkInfo"))
+    	    				System.out.print(el);
+    	    				if(el.getNodeName().equals("RemarkInfo"))
     	    				{
-    	    					test=el.getElementsByTagName("Text").item(0).getTextContent();
-    	    					if(test.startsWith("U*53-"))
+    	    					NodeList remarkNodes=el.getChildNodes();	
+    	    					for(int k=0;k<remarkNodes.getLength();k++)
     	    					{
-    	    						em=test.substring(5);
-    	    						if(em.contains("¤¤U"))
+    	    						Element e=(Element)remarkNodes.item(k);
+    	    						System.out.println(e.getAttribute("Type"));
+    	    						if(e.getAttribute("Type").equals("Invoice") && e.getElementsByTagName("Text").item(0).getTextContent().startsWith("U*53-") )
     	    						{
-    	    							 ch=em.replaceAll("¤¤U", "_");
-    	    							change=ch.substring(0, ch.indexOf('�'))+'@'+ch.substring(ch.indexOf('�')+1);
-    	    							ClientEmail=change;
+    	    							test=e.getElementsByTagName("Text").item(0).getTextContent();
+    	    							em=test.substring(5);
+    	    							if(em.contains("¤¤U"))
+        	    						{
+        	    							 ch=em.replaceAll("¤¤U", "_");
+        	    							em=ch;
+        	    						}
+        	    						//em.replace("¤", "@");
+        	    						change=em.substring(0, em.indexOf('�'))+'@'+em.substring(em.indexOf('�')+1);
+        	    							ClientEmail=change;
+    	    							
     	    						}
-    	    						//em.replace("¤", "@");
-    	    						else{
-    	    							ch=em.replaceAll("¤", "@");
-    	    						change=ch;
-    	    						ClientEmail=change;
-    	    					}}
+    	    					}
+    	    					
     	    					
     	    				}
     					}
@@ -240,6 +260,7 @@ public class UTTCommandInt implements IService{
     	}
 		if(ClientEmail.equals(""))
 		{ClientEmail="No UDID53 found";}
+		System.out.println(ClientEmail);
 		return ClientEmail;
 	}
 	
@@ -284,7 +305,25 @@ public class UTTCommandInt implements IService{
             }
       });
 	}*/
-
+	 private String getStringFromDoc(Document doc)
+	    {
+	        try
+	        {
+	            DOMSource domSource = new DOMSource(doc);
+	            StringWriter writer = new StringWriter();
+	            StreamResult result = new StreamResult(writer);
+	            TransformerFactory tf = TransformerFactory.newInstance();
+	            Transformer transformer = tf.newTransformer();
+	            transformer.transform(domSource, result);
+	            String s = writer.toString();
+	            return s;
+	        }
+	        catch (TransformerException ex)
+	        {
+	            ex.printStackTrace();
+	            return null;
+	        }
+	    }
 		
 	
 	public void setUTTView(UTTView v)

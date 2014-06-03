@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: UTT
+Bundle-Name: Unused Ticket Tracker
 Bundle-SymbolicName: com.ovation.UTT;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: com.ovation.utt.Activator
